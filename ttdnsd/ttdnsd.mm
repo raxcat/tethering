@@ -16,7 +16,7 @@
  */
 
 #include "ttdnsd.h"
-
+#include "LogLevel.h"
 /*
  *  Binary is linked with libtsocks therefore all TCP connections will
  *  be routed over Tor (if tsocks.conf is set up to chain with Tor).
