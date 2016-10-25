@@ -396,19 +396,17 @@ static void AcceptCallback(CFSocketRef s, CFSocketCallBackType type, CFDataRef a
 		addr.sin_family = AF_INET;
 		addr.sin_addr.s_addr = INADDR_ANY;
 		
-		int iport;
-		int ports[] = {1080,3128,-1};
-		for (iport = 0 ; ports[iport] >= 0 ; ++iport) {
-			port=ports[iport];
-			addr.sin_port   = htons(port);
-			err = bind(fd, (const struct sockaddr *) &addr, sizeof(addr));
-            success = (err == 0);
-			if (success)
-				break;
-            else{
-                LOG_NETWORK_SOCKS(NSLOGGER_LEVEL_ERROR, @"Socks Server failed to bind port (%d), errono (%d)", port, errno);
-            }
-		}
+        addr.sin_port   = htons(port);
+        err = bind(fd, (const struct sockaddr *) &addr, sizeof(addr));
+        success = (err == 0);
+        if (success){
+        }
+        else{
+            close(fd);
+            fd = NULL;
+            LOG_NETWORK_SOCKS(NSLOGGER_LEVEL_ERROR, @"Socks Server failed to bind port (%d), errono (%d)", port, errno);
+            return;
+        }
 	}
 	if (success) {
 		err = listen(fd, 5);
