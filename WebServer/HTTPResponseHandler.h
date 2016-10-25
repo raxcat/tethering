@@ -19,7 +19,7 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-@class HTTPServer;
+@class HTTPProxyServer;
 
 @interface HTTPResponseHandler : NSObject
 {
@@ -27,7 +27,7 @@
 	NSString *requestMethod;
 	NSDictionary *headerFields;
 	NSFileHandle *fileHandle;
-	HTTPServer *server;
+	HTTPProxyServer *server;
 	NSURL *url;
 }
 
@@ -36,14 +36,14 @@
 
 + (HTTPResponseHandler *)handlerForRequest:(CFHTTPMessageRef)aRequest
 	fileHandle:(NSFileHandle *)requestFileHandle
-	server:(HTTPServer *)aServer;
+	server:(HTTPProxyServer *)aServer;
 
 - (id)initWithRequest:(CFHTTPMessageRef)aRequest
 	method:(NSString *)method
 	url:(NSURL *)requestURL
 	headerFields:(NSDictionary *)requestHeaderFields
 	fileHandle:(NSFileHandle *)requestFileHandle
-	server:(HTTPServer *)aServer;
+	server:(HTTPProxyServer *)aServer;
 - (void)startResponse;
 - (NSString *)serverIPForRequest;
 - (void)endResponse;

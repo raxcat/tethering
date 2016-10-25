@@ -13,8 +13,9 @@
 //
 
 #import "HTTPResponseHandler.h"
-#import "HTTPServer.h"
+#import "HTTPProxyServer.h"
 #import "PacFileResponse.h"
+#import "UIDevice_Extended.h"
 #import <ifaddrs.h>
 #import <arpa/inet.h>
 #include <sys/types.h>
@@ -157,7 +158,7 @@ static NSMutableArray *registeredHandlers = nil;
 //
 + (HTTPResponseHandler *)handlerForRequest:(CFHTTPMessageRef)aRequest
 	fileHandle:(NSFileHandle *)requestFileHandle
-	server:(HTTPServer *)aServer
+	server:(HTTPProxyServer *)aServer
 {
 	NSDictionary *requestHeaderFields =
 		(__bridge_transfer NSDictionary *)CFHTTPMessageCopyAllHeaderFields(aRequest);
@@ -206,7 +207,7 @@ static NSMutableArray *registeredHandlers = nil;
 	url:(NSURL *)requestURL
 	headerFields:(NSDictionary *)requestHeaderFields
 	fileHandle:(NSFileHandle *)requestFileHandle
-	server:(HTTPServer *)aServer
+	server:(HTTPProxyServer *)aServer
 {
 	self = [super init];
 	if (self != nil)
@@ -239,7 +240,7 @@ static NSMutableArray *registeredHandlers = nil;
 // THIS IS THE PRIMARY METHOD FOR SUBCLASSES TO OVERRIDE. YOU DO NOT NEED
 // TO INVOKE SUPER FOR THIS METHOD.
 //
-// This method should only be invoked from HTTPServer (it needs to add the
+// This method should only be invoked from HTTPProxyServer (it needs to add the
 // object to its responseHandlers before this method is invoked).
 //
 // [server closeHandler:self] should be invoked when done sending data.
@@ -290,7 +291,7 @@ static NSMutableArray *registeredHandlers = nil;
 // Closes the outgoing file handle.
 //
 // You should not invoke this method directly. It should only be invoked from
-// HTTPServer (it needs to remove the object from its responseHandlers before
+// HTTPProxyServer (it needs to remove the object from its responseHandlers before
 // this method is invoked). To close a reponse handler, use
 // [server closeHandler:responseHandler].
 //
