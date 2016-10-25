@@ -26,12 +26,12 @@
 //Max concurrent coonections
 #define MAX_CONNECTIONS 100
 
-@class MOGlassButton;
+@class MOGlassButton, SocksProxyController;
 
 @protocol SocksProxyControllerDelegate <NSObject>
 @optional
--(void)didStartNetworking;
--(void)didStopNetworking;
+-(void)didStartNetworking:(SocksProxyController*)controller;
+-(void)didStopNetworking:(SocksProxyController*)controller;
 @end
 
 

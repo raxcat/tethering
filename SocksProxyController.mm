@@ -184,10 +184,11 @@ typedef enum {
 	self.currentOpenConnections = countOpen;
 	
 	if (!countOpen) {
-        if([self.delegate respondsToSelector:@selector(didStartNetworking)]){
+        if([self.delegate respondsToSelector:@selector(didStartNetworking:)]){
             __weak SocksProxyController * weakself = self;
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakself.delegate didStartNetworking];
+                SocksProxyController * s = weakself;
+                [s.delegate didStartNetworking:s];
             });
         }
 	}
@@ -216,10 +217,11 @@ typedef enum {
 	NSInteger countOpen = [self countOpen];
 	self.currentOpenConnections = countOpen;
 	if (!countOpen) {
-        if([self.delegate respondsToSelector:@selector(didStopNetworking)]){
+        if([self.delegate respondsToSelector:@selector(didStopNetworking:)]){
             __weak SocksProxyController * weakself = self;
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakself.delegate didStopNetworking];
+                SocksProxyController * s = weakself;
+                [s.delegate didStopNetworking:s];
             });
         }
 	}
