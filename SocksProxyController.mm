@@ -21,7 +21,7 @@
 //
 
 #import "SocksProxyController.h"
-#import "AppDelegate.h"
+//#import "AppDelegate.h"
 #import "UIDevice_Extended.h"
 #import "MOGlassButton.h"
 
@@ -32,9 +32,13 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include "ttdnsd.h"
+
 
 @interface SocksProxyController () <SFSafariViewControllerDelegate>
-
+{
+    DNSServer * _DNSServer;
+}
 // Properties that don't need to be seen by the outside world.
 
 @property (nonatomic, readonly) BOOL                isStarted;
@@ -181,7 +185,7 @@ typedef enum {
 	self.currentOpenConnections = countOpen;
 	
 	if (!countOpen) {
-		[[AppDelegate sharedAppDelegate] didStartNetworking];
+//		[[AppDelegate sharedAppDelegate] didStartNetworking];
 	}
 	
 	[self refreshProxyTable];
@@ -208,7 +212,7 @@ typedef enum {
 	NSInteger countOpen = [self countOpen];
 	self.currentOpenConnections = countOpen;
 	if (!countOpen) {
-		[[AppDelegate sharedAppDelegate] didStopNetworking];		
+//		[[AppDelegate sharedAppDelegate] didStopNetworking];		
 	}
 
 	[self refreshProxyTable];
@@ -509,7 +513,8 @@ static void AcceptCallback(CFSocketRef s, CFSocketCallBackType type, CFDataRef a
         [self _stopServer:nil];
         _DNSServer = DNSServer::getInstance();
         _DNSServer->stopDNSServer();
-        _HTTPServer = [HTTPServer sharedHTTPServerWithSocksProxyPort:currentPort];
+//        [_DNSServerWrapper stop];
+        _HTTPServer = [HTTPProxyServer sharedHTTPServerWithSocksProxyPort:currentPort];
         [_HTTPServer stop];
     } else {
         
@@ -523,9 +528,11 @@ static void AcceptCallback(CFSocketRef s, CFSocketCallBackType type, CFDataRef a
             _DNSServer = DNSServer::getInstance();
             const char * ipv4Addr = [currentAddress cStringUsingEncoding:NSASCIIStringEncoding];
             _DNSServer->startDNSServer(0, ipv4Addr);
+//            [_DNSServerWrapper start];
+            
             //start HTTP server that advertise socks.pac
-            _HTTPServer = [HTTPServer sharedHTTPServerWithSocksProxyPort:currentPort];
-            HTTPServerState currentHTTPServerState = [_HTTPServer state] ;
+            _HTTPServer = [HTTPProxyServer sharedHTTPServerWithSocksProxyPort:currentPort];
+            HTTPProxyServerState currentHTTPServerState = [_HTTPServer state] ;
             if (currentHTTPServerState == SERVER_STATE_IDLE ||
                 currentHTTPServerState == SERVER_STATE_STOPPING)
                 [_HTTPServer start];

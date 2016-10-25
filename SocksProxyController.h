@@ -22,8 +22,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SocksProxy.h"
-#import "HTTPServer.h"
-#include "ttdnsd.h"
+#import "HTTPProxyServer.h"
 //Max concurrent coonections
 #define MAX_CONNECTIONS 100
 
@@ -50,8 +49,8 @@
     NSString *currentAddress;
     NSInteger currentOpenConnections;
     NSInteger currentConnectionCount;
-    DNSServer * _DNSServer;
-    HTTPServer * _HTTPServer;
+
+    HTTPProxyServer * _HTTPServer;
     
 }
 
