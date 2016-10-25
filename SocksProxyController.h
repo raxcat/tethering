@@ -28,6 +28,13 @@
 
 @class MOGlassButton;
 
+@protocol SocksProxyControllerDelegate <NSObject>
+@optional
+-(void)didStartNetworking;
+-(void)didStopNetworking;
+@end
+
+
 @interface SocksProxyController : UITableViewController <SocksProxyDelegate, NSNetServiceDelegate>
 {
     UILabel *                   _portLabel;
@@ -61,8 +68,8 @@
 @property (nonatomic, assign) NSInteger currentConnectionCount;
 @property (nonatomic, assign) NSInteger uploadData;
 @property (nonatomic, assign) NSInteger downloadData;
-@property (nonatomic, strong) IBOutlet MOGlassButton *                  startOrStopButton;
-
+@property (nonatomic, strong) IBOutlet MOGlassButton * startOrStopButton;
+@property (weak) id<SocksProxyControllerDelegate> delegate;
 - (IBAction)startOrStopAction:(id)sender;
 
 - (void)refreshProxyTable;

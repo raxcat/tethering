@@ -21,7 +21,6 @@
 //
 
 #import "SocksProxyController.h"
-//#import "AppDelegate.h"
 #import "UIDevice_Extended.h"
 #import "MOGlassButton.h"
 
@@ -185,7 +184,12 @@ typedef enum {
 	self.currentOpenConnections = countOpen;
 	
 	if (!countOpen) {
-//		[[AppDelegate sharedAppDelegate] didStartNetworking];
+        if([self.delegate respondsToSelector:@selector(didStartNetworking)]){
+            __weak SocksProxyController * weakself = self;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakself.delegate didStartNetworking];
+            });
+        }
 	}
 	
 	[self refreshProxyTable];
@@ -212,7 +216,12 @@ typedef enum {
 	NSInteger countOpen = [self countOpen];
 	self.currentOpenConnections = countOpen;
 	if (!countOpen) {
-//		[[AppDelegate sharedAppDelegate] didStopNetworking];		
+        if([self.delegate respondsToSelector:@selector(didStopNetworking)]){
+            __weak SocksProxyController * weakself = self;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakself.delegate didStopNetworking];
+            });
+        }
 	}
 
 	[self refreshProxyTable];
