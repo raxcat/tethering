@@ -24,30 +24,30 @@ typedef enum
 	SERVER_STATE_STARTING,
 	SERVER_STATE_RUNNING,
 	SERVER_STATE_STOPPING
-} HTTPServerState;
+} HTTPProxyServerState;
 
 static const int HTTP_SERVER_PORT = 8080;
 
 @class HTTPResponseHandler;
 
-@interface HTTPServer : NSObject <NSNetServiceDelegate>
+@interface HTTPProxyServer : NSObject <NSNetServiceDelegate>
 {
 	NSError *lastError;
 	NSFileHandle *listeningHandle;
 	CFSocketRef socket;
-	HTTPServerState state;
+	HTTPProxyServerState state;
 	NSMutableDictionary *incomingRequests;
 	NSMutableSet *responseHandlers;
     NSNetService *netService;
 }
 
 @property (nonatomic, readonly, retain) NSError *lastError;
-@property (readonly, assign) HTTPServerState state;
+@property (readonly, assign) HTTPProxyServerState state;
 @property (nonatomic, readonly) UInt32 httpServerPort;
 @property (nonatomic) NSInteger socksProxyPort;
 
-+ (HTTPServer *)sharedHTTPServer;
-+ (HTTPServer *)sharedHTTPServerWithSocksProxyPort: (NSInteger) socksProxyPort;
++ (HTTPProxyServer *)sharedHTTPServer;
++ (HTTPProxyServer *)sharedHTTPServerWithSocksProxyPort: (NSInteger) socksProxyPort;
 
 - (void)start;
 - (void)stop;

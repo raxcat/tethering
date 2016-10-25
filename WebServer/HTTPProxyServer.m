@@ -1,5 +1,5 @@
 //
-//  HTTPServer.m
+//  HTTPProxyServer.m
 //  TextTransfer
 //
 //  Created by Matt Gallagher on 2009/07/13.
@@ -14,7 +14,7 @@
 
 //  08-11-2015 Add ARC support and remove singleton template
 //
-#import "HTTPServer.h"
+#import "HTTPProxyServer.h"
 #import <sys/socket.h>
 #import <netinet/in.h>
 #if TARGET_OS_IPHONE
@@ -22,48 +22,48 @@
 #endif
 #import "HTTPResponseHandler.h"
 
-NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateChanged";
+NSString * const HTTPProxyServerNotificationStateChanged = @"ServerNotificationStateChanged";
 
 //
 // Internal methods and properties:
 //	The "lastError" and "state" are only writable by the server itself.
 //
-@interface HTTPServer ()
+@interface HTTPProxyServer ()
 @property (nonatomic, readwrite, retain) NSError *lastError;
-@property (readwrite, assign) HTTPServerState state;
+@property (readwrite, assign) HTTPProxyServerState state;
 @end
 
-@implementation HTTPServer
+@implementation HTTPProxyServer
 
 @synthesize lastError;
 @synthesize state;
 
-+(HTTPServer* )sharedHTTPServer
++(HTTPProxyServer* )sharedHTTPServer
 {
-    static HTTPServer* sharedHTTPServer = nil;
+    static HTTPProxyServer* sharedHTTPProxyServer = nil;
     @synchronized(self)
     {
-        if (sharedHTTPServer == nil)
+        if (sharedHTTPProxyServer == nil)
         {
-            sharedHTTPServer = [[HTTPServer alloc] init];
+            sharedHTTPProxyServer = [[HTTPProxyServer alloc] init];
         }
     }
     
-    return sharedHTTPServer;
+    return sharedHTTPProxyServer;
 }
 
-+ (HTTPServer *)sharedHTTPServerWithSocksProxyPort: (NSInteger) socksProxyPort
++ (HTTPProxyServer *)sharedHTTPServerWithSocksProxyPort: (NSInteger) socksProxyPort
 {
-    static HTTPServer* sharedHTTPServerWithSocksProxyPort = nil;
+    static HTTPProxyServer* sharedHTTPProxyServerWithSocksProxyPort = nil;
     @synchronized(self)
     {
-        if (sharedHTTPServerWithSocksProxyPort == nil)
+        if (sharedHTTPProxyServerWithSocksProxyPort == nil)
         {
-            sharedHTTPServerWithSocksProxyPort = [[HTTPServer alloc] initWithSocksProxyPort:socksProxyPort];
+            sharedHTTPProxyServerWithSocksProxyPort = [[HTTPProxyServer alloc] initWithSocksProxyPort:socksProxyPort];
         }
     }
     
-    return sharedHTTPServerWithSocksProxyPort;
+    return sharedHTTPProxyServerWithSocksProxyPort;
 }
 
 //
@@ -101,7 +101,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 
 -(void)startBonjourServices
 {
-    netService = [[NSNetService alloc] initWithDomain:@"" type:@"_tetheringhttpserver._tcp." name:@"" port:self.httpServerPort];
+    netService = [[NSNetService alloc] initWithDomain:@"" type:@"_tetheringHTTPProxyServer._tcp." name:@"" port:self.HTTPProxyServerPort];
     netService.delegate = self;
     [netService publish];
 }
@@ -132,14 +132,14 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 	[self stop];
 	
 	self.state = SERVER_STATE_IDLE;
-	LOG_NETWORK_HTTP(NSLOGGER_LEVEL_ERROR, @"HTTPServer error: %@", self.lastError);
+	LOG_NETWORK_HTTP(NSLOGGER_LEVEL_ERROR, @"HTTPProxyServer error: %@", self.lastError);
 }
 
 //
 // errorWithName:
 //
 // Stops the server and sets the last error to "errorName", localized using the
-// HTTPServerErrors.strings file (if present).
+// HTTPProxyServerErrors.strings file (if present).
 //
 // Parameters:
 //    errorName - the description used for the error
@@ -147,14 +147,14 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 - (void)errorWithName:(NSString *)errorName
 {
 	self.lastError = [NSError
-		errorWithDomain:@"HTTPServerError"
+		errorWithDomain:@"HTTPProxyServerError"
 		code:0
 		userInfo:
 			[NSDictionary dictionaryWithObject:
 				NSLocalizedStringFromTable(
 					errorName,
 					@"",
-					@"HTTPServerErrors")
+					@"HTTPProxyServerErrors")
 				forKey:NSLocalizedDescriptionKey]];	
 }
 
@@ -166,7 +166,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 // Parameters:
 //    newState - the new state for the server
 //
-- (void)setState:(HTTPServerState)newState
+- (void)setState:(HTTPProxyServerState)newState
 {
 	if (state == newState)
 	{
@@ -176,7 +176,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 	state = newState;
 	
 	[[NSNotificationCenter defaultCenter]
-		postNotificationName:HTTPServerNotificationStateChanged
+		postNotificationName:HTTPProxyServerNotificationStateChanged
 		object:self];
 }
 
@@ -213,7 +213,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 	address.sin_len = sizeof(address);
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = htonl(INADDR_ANY);
-	address.sin_port = htons(self.httpServerPort);
+	address.sin_port = htons(self.HTTPProxyServerPort);
 	CFDataRef addressData =
 		CFDataCreate(NULL, (const UInt8 *)&address, sizeof(address));
 	
@@ -412,7 +412,7 @@ NSString * const HTTPServerNotificationStateChanged = @"ServerNotificationStateC
 	[responseHandlers removeObject:aHandler];
 }
 
-- (UInt32)httpServerPort
+- (UInt32)HTTPProxyServerPort
 {
 	return HTTP_SERVER_PORT;
 }
