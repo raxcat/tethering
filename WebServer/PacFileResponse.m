@@ -13,7 +13,7 @@
 //
 
 #import "PacFileResponse.h"
-#import "HTTPServer.h"
+#import "HTTPProxyServer.h"
 
 @implementation PacFileResponse
 
