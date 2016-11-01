@@ -60,7 +60,7 @@
     HTTPProxyServer * _HTTPServer;
     
 }
-
+@property (nonatomic, readonly) BOOL isStarted;
 @property (nonatomic, copy) NSString *currentStatusText;
 @property (nonatomic, assign) NSInteger currentPort;
 @property (nonatomic, copy) NSString *currentAddress;

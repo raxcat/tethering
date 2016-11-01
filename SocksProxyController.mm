@@ -40,7 +40,7 @@
 }
 // Properties that don't need to be seen by the outside world.
 
-@property (nonatomic, readonly) BOOL                isStarted;
+
 @property (nonatomic, strong)   NSNetService *      netService;
 @property (nonatomic, assign)   CFSocketRef         listeningSocket;
 @property (nonatomic, assign)   NSInteger			nConnections;
