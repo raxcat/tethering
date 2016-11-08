@@ -36,7 +36,7 @@ NSString * const HTTPProxyServerNotificationStateChanged = @"ServerNotificationS
 @implementation HTTPProxyServer
 
 @synthesize lastError;
-@synthesize state;
+@synthesize state = _state;
 
 +(HTTPProxyServer* )sharedHTTPServer
 {
@@ -168,12 +168,12 @@ NSString * const HTTPProxyServerNotificationStateChanged = @"ServerNotificationS
 //
 - (void)setState:(HTTPProxyServerState)newState
 {
-	if (state == newState)
+	if (_state == newState)
 	{
 		return;
 	}
 
-	state = newState;
+	_state = newState;
 	
 	[[NSNotificationCenter defaultCenter]
 		postNotificationName:HTTPProxyServerNotificationStateChanged
